@@ -15,7 +15,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Color.fromARGB(255, 85, 176, 250),
+      statusBarColor: Colors.white,
     ),
   );
   runApp(const MyApp());
@@ -210,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                             child: const Text("Yes"),
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.red.shade800),
+                                backgroundColor: Colors.red.shade800),
                           ),
                         ),
                         const SizedBox(width: 15),
@@ -223,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: const Text("No",
                               style: TextStyle(color: Colors.black)),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
+                            backgroundColor: Colors.white,
                           ),
                         ))
                       ],
@@ -387,6 +387,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
               Column(
                 children: [
+                  Container(
+                    height: MediaQuery.of(context).padding.top,
+                    color: Colors.purple,
+                  ),
                   Expanded(
                     child: Stack(
                       alignment: Alignment.center,
@@ -496,6 +500,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             : Container(),
                       ],
                     ),
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).padding.bottom,
                   ),
                 ],
               ),
