@@ -91,30 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     //requestPermissions();
     connectionCheck();
-
-    /* Future.delayed(const Duration(seconds: 3), () async {
-      try {
-        var device = await OneSignal.shared.getDeviceState().then((value) {
-          userId = value!.userId!;
-        });
-      } catch (e) {
-        print(e);
-        var device = await OneSignal.shared.getDeviceState();
-        //userId = device!.userId!;
-        OneSignal.shared.setSubscriptionObserver((changes) async {
-          print("ID Assigned ");
-          print(changes.from.userId);
-          print(changes.to.userId);
-          userId = changes.to.userId!;
-          print('userId: $userId');
-          var device = await OneSignal.shared.getDeviceState().then((value) {
-            userId = value!.userId!;
-          });
-          print(" User ID: Laveandroid_$userId");
-          setState(() {});
-        });
-      }
-    }); */
   }
 
   bool isConnected = true;
@@ -163,22 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int index = 0;
-  /* initOneSignal() async {
-    await OneSignal.shared.setAppId("8aa5d935-ca61-471c-a017-eb71269bfcb3");
-
-    OneSignal.shared
-        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
-      print(
-          '"OneSignal: notification opened: ${result.notification.launchUrl}');
-      url = result.notification.launchUrl!;
-      controllerGlobal.loadUrl(
-          urlRequest:
-              URLRequest(url: Uri.parse('${result.notification.launchUrl}')));
-
-      result.notification.launchUrl;
-    });
-    print('id Attached');
-  } */
 
   late InAppWebViewController controllerGlobal;
   late InAppWebViewController controllerGlobal2;
@@ -235,24 +195,6 @@ class _MyHomePageState extends State<MyHomePage> {
           });
     }
   }
-
-  /* double posx = 100.0;
-  double posy = 100.0;
-
-  void onTapDown(BuildContext context, details) {
-    print('${details.globalPosition}');
-    final RenderObject? box = context.findRenderObject();
-    if (box is RenderBox) {
-      final Offset localOffset = box.globalToLocal(details.globalPosition);
-      setState(() {
-        posx = localOffset.dx;
-        posy = localOffset.dy;
-      });
-      print('offset= $localOffset');
-      print(posx);
-      print(posy);
-    }
-  } */
 
   showpopup(id, ctx) {
     return showDialog(
@@ -360,154 +302,151 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () => _exitApp(context),
-        child: Scaffold(
-          body: IndexedStack(
-            index: index,
-            children: [
-              isConnected
-                  ? Container(
-                      color: Colors.white,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                              width: double.infinity,
-                              child: Image.asset('assets/splash.png')),
-                        ],
-                      ),
-                    )
-                  : Image.asset(
-                      'assets/network.gif',
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      fit: BoxFit.fill,
-                    ),
-              Column(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).padding.top,
-                    color: Colors.purple,
-                  ),
-                  Expanded(
-                    child: Stack(
-                      alignment: Alignment.center,
+    return WillPopScope(
+      onWillPop: () => _exitApp(context),
+      child: Scaffold(
+        body: IndexedStack(
+          index: index,
+          children: [
+            isConnected
+                ? Container(
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            InAppWebView(
-                              onLoadStart: (controller, url) async {
-                                isLoading = true;
-                                log("$url");
-                                if (url.toString().contains("facebook") ||
-                                    url.toString().contains("youtube") ||
-                                    url.toString().contains("pinterest")) {
-                                  await launchUrl(url!,
-                                      mode: LaunchMode.externalApplication);
-                                  controllerGlobal.goBack();
-                                }
-                                log("main Load start $isLoading");
-                                setState(() {});
-                              },
-                              onLoadStop: (controller, url) {
-                                isLoading = false;
-                                pullToRefreshController.endRefreshing();
-                                log("main Load start $isLoading");
-                                setState(() {});
-                              },
-                              onCreateWindow: (controller, action) async {
-                                log("url create: ${action.request.url}");
-                                /* if (interstitialLoaded) {
-                              _interstitialAd.show();
-                            } */
-                                //showpopup(action.windowId, context);
-
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => NewWindow(
-                                      windowId: action.windowId,
-                                    ),
-                                  ),
-                                );
-                                return true;
-                              },
-                              pullToRefreshController: pullToRefreshController,
-                              initialUrlRequest:
-                                  URLRequest(url: Uri.parse(url)),
-                              onWebViewCreated: (controller) {
-                                controllerGlobal = controller;
-                              },
-                              initialOptions: InAppWebViewGroupOptions(
-                                crossPlatform: InAppWebViewOptions(
-                                  horizontalScrollBarEnabled: false,
-                                  verticalScrollBarEnabled: false,
-                                  supportZoom: false,
-                                ),
-                                android: AndroidInAppWebViewOptions(
-                                  useHybridComposition: true,
-                                  supportMultipleWindows: true,
-                                ),
-                              ),
-                              androidOnPermissionRequest:
-                                  (controller, origin, resources) async {
-                                return PermissionRequestResponse(
-                                    resources: resources,
-                                    action:
-                                        PermissionRequestResponseAction.GRANT);
-                              },
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    launchUrl(
-                                      Uri.parse(
-                                          "https://play.google.com/store/apps/details?id=com.gli.ng"),
-                                      mode: LaunchMode.externalApplication,
-                                    );
-                                  },
-                                  icon: const Icon(Icons.share),
-                                  label: const Text(""),
-                                ),
-                                ElevatedButton.icon(
-                                  onPressed: () async {
-                                    log("back pressed");
-                                    await _exitApp(context);
-                                    //controllerGlobal.goBack();
-                                  },
-                                  icon: const Icon(Icons.arrow_back),
-                                  label: const Text(""),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.2,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        isLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.red,
-                                backgroundColor: Colors.black,
-                                strokeWidth: 10,
-                              )
-                            : Container(),
+                        SizedBox(
+                            width: double.infinity,
+                            child: Image.asset('assets/splash.png')),
                       ],
                     ),
+                  )
+                : Image.asset(
+                    'assets/network.gif',
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    fit: BoxFit.fill,
                   ),
-                  Container(
-                    height: MediaQuery.of(context).padding.bottom,
+            Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).padding.top,
+                  color: const Color.fromARGB(255, 45, 91, 227),
+                ),
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          InAppWebView(
+                            onLoadStart: (controller, url) async {
+                              isLoading = true;
+                              log("$url");
+                              if (url.toString().contains("facebook") ||
+                                  url.toString().contains("youtube") ||
+                                  url.toString().contains("pinterest")) {
+                                await launchUrl(url!,
+                                    mode: LaunchMode.externalApplication);
+                                controllerGlobal.goBack();
+                              }
+                              log("main Load start $isLoading");
+                              setState(() {});
+                            },
+                            onLoadStop: (controller, url) {
+                              isLoading = false;
+                              pullToRefreshController.endRefreshing();
+                              log("main Load start $isLoading");
+                              setState(() {});
+                            },
+                            onCreateWindow: (controller, action) async {
+                              log("url create: ${action.request.url}");
+                              /* if (interstitialLoaded) {
+                            _interstitialAd.show();
+                          } */
+                              //showpopup(action.windowId, context);
+
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => NewWindow(
+                                    windowId: action.windowId,
+                                  ),
+                                ),
+                              );
+                              return true;
+                            },
+                            pullToRefreshController: pullToRefreshController,
+                            initialUrlRequest: URLRequest(url: Uri.parse(url)),
+                            onWebViewCreated: (controller) {
+                              controllerGlobal = controller;
+                            },
+                            initialOptions: InAppWebViewGroupOptions(
+                              crossPlatform: InAppWebViewOptions(
+                                horizontalScrollBarEnabled: false,
+                                verticalScrollBarEnabled: false,
+                                supportZoom: false,
+                              ),
+                              android: AndroidInAppWebViewOptions(
+                                useHybridComposition: true,
+                                supportMultipleWindows: true,
+                              ),
+                            ),
+                            androidOnPermissionRequest:
+                                (controller, origin, resources) async {
+                              return PermissionRequestResponse(
+                                  resources: resources,
+                                  action:
+                                      PermissionRequestResponseAction.GRANT);
+                            },
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  launchUrl(
+                                    Uri.parse(
+                                        "https://play.google.com/store/apps/details?id=com.gli.ng"),
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                },
+                                icon: const Icon(Icons.share),
+                                label: const Text(""),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  log("back pressed");
+                                  await _exitApp(context);
+                                  //controllerGlobal.goBack();
+                                },
+                                icon: const Icon(Icons.arrow_back),
+                                label: const Text(""),
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      isLoading
+                          ? const CircularProgressIndicator(
+                              color: Colors.red,
+                              backgroundColor: Colors.black,
+                              strokeWidth: 10,
+                            )
+                          : Container(),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).padding.bottom,
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
